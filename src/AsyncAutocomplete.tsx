@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 import { Autocomplete } from "./Autocomplete";
 
@@ -65,14 +65,27 @@ function getOptionLabel(option: Option | null) {
 
 function AsyncAutocomplete() {
   const [value, setValue] = useState<Option | null>(null);
+  const [options, setOptions] = useState<Option[]>([...dummyOptions]);
+
+  const handleSearch = async (term: string) => {
+    await sleep(1000);
+    setOptions(
+      dummyOptions.filter((opt) =>
+        getOptionLabel(opt).toLowerCase().includes(term.toLowerCase())
+      )
+    );
+  };
 
   console.log("value", value);
 
   return (
     <Autocomplete
-      options={dummyOptions}
+      options={options}
       value={value}
       onChange={(_, value) => setValue(value)}
+      onInputChange={(_, text) => {
+        handleSearch(text);
+      }}
       getOptionLabel={getOptionLabel}
     />
   );

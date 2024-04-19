@@ -5,6 +5,7 @@ interface AutocompleteProps<Value> {
   options: Value[];
   value: Value;
   onChange?: (event: React.SyntheticEvent, value: Value | null) => void;
+  onInputChange?: (event: React.SyntheticEvent, value: string) => void;
   getOptionLabel?: (option: Value) => string;
 }
 
@@ -17,6 +18,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
     options,
     value,
     onChange,
+    onInputChange,
     getOptionLabel = defaultGetOptionLabel,
   } = props;
 
@@ -30,6 +32,9 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInputValue = event.target.value;
+    if (onInputChange) {
+      onInputChange(event, newInputValue);
+    }
     setInputValue(newInputValue);
 
     if (newInputValue === "") {
@@ -40,10 +45,10 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   };
 
   const handleOptionClick =
-    (option: V) => (e: React.MouseEvent<HTMLLIElement>) => {
+    (option: V) => (event: React.MouseEvent<HTMLLIElement>) => {
       setInputValue(getOptionLabel(option));
       if (onChange) {
-        onChange(e, option);
+        onChange(event, option);
       }
     };
 
