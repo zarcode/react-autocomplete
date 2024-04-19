@@ -23,7 +23,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   } = props;
 
   const [inputValue, setInputValue] = useState("");
-  const [showResults, setShowResults] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const dropdownRef = useRef(null);
@@ -38,7 +38,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInputValue = event.target.value;
 
-    setShowResults(newInputValue !== "");
+    setShowDropdown(newInputValue !== "");
     setInputValue(newInputValue);
 
     if (onInputChange) {
@@ -60,7 +60,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         | React.KeyboardEvent<HTMLInputElement>
     ) => {
       setInputValue(getOptionLabel(option));
-      setShowResults(false);
+      setShowDropdown(false);
       if (onChange) {
         onChange(event, option);
       }
@@ -84,7 +84,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         }
         break;
       case "Escape":
-        // setShowResults(false);
+        setShowDropdown(false);
         setSelectedIndex(-1);
         break;
     }
@@ -96,7 +96,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
 
   const handleBlur = () => {
     setTimeout(() => {
-      setShowResults(false);
+      setShowDropdown(false);
     }, 150);
   };
 
@@ -118,7 +118,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
       />
-      {showResults && (
+      {showDropdown && (
         <ul ref={dropdownRef} className={styles["autocomplete__dropdown"]}>
           {options.map((option, index) => (
             <li
