@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useDebouncedCallback } from "./useDebounceCallback";
 import "./App.css";
 import { Autocomplete } from "./Autocomplete";
 
@@ -65,28 +66,42 @@ function getOptionLabel(option: Option | null) {
 
 function AsyncAutocomplete() {
   const [value, setValue] = useState<Option | null>(null);
-  const [options, setOptions] = useState<Option[]>([...dummyOptions]);
+  const [options, setOptions] = useState<Option[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async (term: string) => {
-    await sleep(1000);
+  const handleSearch = useCallback(async (term: string) => {
+    if (!term) {
+      setOptions([]);
+      return;
+    }
+    console.log("called", term);
+
+    setLoading(true);
+    await sleep(5000);
+
     setOptions(
       dummyOptions.filter((opt) =>
         getOptionLabel(opt).toLowerCase().includes(term.toLowerCase())
       )
     );
-  };
+    setLoading(false);
+  }, []);
 
-  console.log("value", value);
+  // const debouncedSearch = debounce(handleSearch, 1000);
+  const debouncedSearch = useDebouncedCallback(handleSearch, 1000);
+
+  console.log("options", options);
 
   return (
     <Autocomplete
       label="Movie"
       placeholder="Select the movie"
+      loading={loading}
       options={options}
       value={value}
       onChange={(_, value) => setValue(value)}
       onInputChange={(_, text) => {
-        handleSearch(text);
+        debouncedSearch(text);
       }}
       getOptionLabel={getOptionLabel}
     />

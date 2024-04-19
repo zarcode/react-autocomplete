@@ -45,6 +45,9 @@
 
 .autocomplete__dropdown-item {
     padding: 10px;
+}
+
+.autocomplete__dropdown-item:not(.autocomplete__dropdown-item--stale) {
     cursor: pointer;
 }
 
@@ -52,8 +55,12 @@
     border-bottom: 1px solid var(--text-color);
 }
 
+.autocomplete__dropdown-item--stale {
+    opacity: 0.5
+}
+
 .autocomplete__dropdown-item--selected,
-.autocomplete__dropdown-item:hover {
+.autocomplete__dropdown-item:hover:not(.autocomplete__dropdown-item--stale) {
     background-color: rgba(255, 255, 255, 0.3);
 }
 

@@ -22,6 +22,7 @@ function highlightMatch(text: string, query: string) {
 interface AutocompleteProps<Value> {
   label?: string;
   placeholder?: string;
+  loading: boolean;
   options: Value[];
   value: Value;
   onChange?: (event: React.SyntheticEvent, value: Value | null) => void;
@@ -36,7 +37,8 @@ function defaultGetOptionLabel<V>(option: V): string {
 export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   const {
     label,
-    placeholder = "Type here...",
+    placeholder = "",
+    loading,
     options,
     value,
     onChange,
@@ -81,7 +83,18 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         | React.MouseEvent<HTMLLIElement>
         | React.KeyboardEvent<HTMLInputElement>
     ) => {
-      setInputValue(getOptionLabel(option));
+      if (loading) {
+        return;
+      }
+
+      const newInputValue = getOptionLabel(option);
+
+      setInputValue(newInputValue);
+
+      if (onInputChange) {
+        onInputChange(event, newInputValue);
+      }
+
       setShowDropdown(false);
       if (onChange) {
         onChange(event, option);
@@ -89,6 +102,10 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
     };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (loading) {
+      return;
+    }
+
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
@@ -117,9 +134,16 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   };
 
   const handleBlur = () => {
+    // Delay hiding the dropdown to allow for clicks to be processed
     setTimeout(() => {
       setShowDropdown(false);
     }, 150);
+  };
+
+  const handleFocus = () => {
+    if (inputValue) {
+      setShowDropdown(true);
+    }
   };
 
   useEffect(() => {
@@ -147,6 +171,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         placeholder={placeholder}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
         onBlur={handleBlur}
         autoComplete="off"
         role="combobox"
@@ -163,11 +188,13 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
             <li
               key={index}
               role="option"
-              className={
+              className={`${styles["autocomplete__dropdown-item"]} ${
                 selectedIndex === index
-                  ? `${styles["autocomplete__dropdown-item"]} ${styles["autocomplete__dropdown-item--selected"]}`
-                  : styles["autocomplete__dropdown-item"]
+                  ? styles["autocomplete__dropdown-item--selected"]
+                  : ""
               }
+              ${loading ? styles["autocomplete__dropdown-item--stale"] : ""}
+              `}
               ref={(el) => {
                 if (el) {
                   itemRefs.current[index] = el;
