@@ -21,6 +21,7 @@ function highlightMatch(text: string, query: string) {
 
 interface AutocompleteProps<Value> {
   label?: string;
+  renderEmpty?: () => React.ReactNode;
   placeholder?: string;
   loading: boolean;
   options: Value[];
@@ -34,10 +35,15 @@ function defaultGetOptionLabel<V>(option: V): string {
   return option == null ? "" : String(option);
 }
 
+function DefaultEmptyList() {
+  return <div className={styles["autocomplete__dropdown-empty"]}>No items</div>;
+}
+
 export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   const {
     label,
     placeholder = "",
+    renderEmpty,
     loading,
     options,
     value,
@@ -179,35 +185,44 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         aria-autocomplete="both"
       />
       {showDropdown && (
-        <ul
-          ref={dropdownRef}
-          role="listbox"
-          className={styles.autocomplete__dropdown}
-        >
-          {options.map((option, index) => (
-            <li
-              key={index}
-              role="option"
-              className={`${styles["autocomplete__dropdown-item"]} ${
-                selectedIndex === index
-                  ? styles["autocomplete__dropdown-item--selected"]
-                  : ""
-              }
-              ${loading ? styles["autocomplete__dropdown-item--stale"] : ""}
-              `}
-              ref={(el) => {
-                if (el) {
-                  itemRefs.current[index] = el;
-                }
-              }}
-              onClick={handleOptionSelect(option)}
-              onMouseEnter={handleMouseEnter}
-              aria-selected={selectedIndex === index}
+        <div className={styles["autocomplete__dropdown"]}>
+          {options.length > 0 ? (
+            <ul
+              ref={dropdownRef}
+              role="listbox"
+              className={`${styles["autocomplete__dropdown-list"]} ${
+                loading ? styles["autocomplete__dropdown-list--loading"] : ""
+              }`}
             >
-              {highlightMatch(getOptionLabel(option), inputValue)}
-            </li>
-          ))}
-        </ul>
+              {options.map((option, index) => (
+                <li
+                  key={index}
+                  role="option"
+                  className={`${styles["autocomplete__dropdown-item"]} ${
+                    selectedIndex === index
+                      ? styles["autocomplete__dropdown-item--selected"]
+                      : ""
+                  }
+                `}
+                  ref={(el) => {
+                    if (el) {
+                      itemRefs.current[index] = el;
+                    }
+                  }}
+                  onClick={handleOptionSelect(option)}
+                  onMouseEnter={handleMouseEnter}
+                  aria-selected={selectedIndex === index}
+                >
+                  {highlightMatch(getOptionLabel(option), inputValue)}
+                </li>
+              ))}
+            </ul>
+          ) : typeof renderEmpty === "function" ? (
+            renderEmpty()
+          ) : (
+            <DefaultEmptyList />
+          )}
+        </div>
       )}
     </div>
   );

@@ -35,7 +35,9 @@
     top: 100%;
     left: 0;
     width: 100%;
-    right: 0;
+}
+
+.autocomplete__dropdown-list {
     margin: 0;
     padding: 0;
     list-style-type: none;
@@ -43,6 +45,11 @@
     overflow-y: auto;
 }
 
+.autocomplete__dropdown-list--loading {
+    opacity: 0.2;
+}
+
+.autocomplete__dropdown-empty,
 .autocomplete__dropdown-item {
     padding: 10px;
 }
@@ -61,7 +68,7 @@
 
 .autocomplete__dropdown-item--selected,
 .autocomplete__dropdown-item:hover:not(.autocomplete__dropdown-item--stale) {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .autocomplete__dropdown-item-text--highlight {
