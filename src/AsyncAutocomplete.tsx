@@ -80,6 +80,8 @@ function AsyncAutocomplete() {
 
   return (
     <Autocomplete
+      label="Movie"
+      placeholder="Select the movie"
       options={options}
       value={value}
       onChange={(_, value) => setValue(value)}

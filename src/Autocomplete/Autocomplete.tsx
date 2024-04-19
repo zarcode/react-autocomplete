@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./Autocomplete.module.css";
 
 interface AutocompleteProps<Value> {
+  label?: string;
+  placeholder?: string;
   options: Value[];
   value: Value;
   onChange?: (event: React.SyntheticEvent, value: Value | null) => void;
@@ -15,6 +17,8 @@ function defaultGetOptionLabel<V>(option: V): string {
 
 export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   const {
+    label,
+    placeholder = "Type here...",
     options,
     value,
     onChange,
@@ -109,20 +113,38 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
 
   return (
     <div className={styles.autocomplete}>
+      {label ? (
+        <label
+          htmlFor="autocomplete_input"
+          className={styles.autocomplete__label}
+        >
+          {label}
+        </label>
+      ) : null}
       <input
+        id="autocomplete_input"
         value={inputValue}
         type="text"
-        className={styles["autocomplete__input"]}
-        placeholder="Start typing..."
+        className={styles.autocomplete__input}
+        placeholder={placeholder}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
+        autoComplete="off"
+        role="combobox"
+        aria-expanded={showDropdown}
+        aria-autocomplete="both"
       />
       {showDropdown && (
-        <ul ref={dropdownRef} className={styles["autocomplete__dropdown"]}>
+        <ul
+          ref={dropdownRef}
+          role="listbox"
+          className={styles.autocomplete__dropdown}
+        >
           {options.map((option, index) => (
             <li
               key={index}
+              role="option"
               className={
                 selectedIndex === index
                   ? `${styles["autocomplete__dropdown-item"]} ${styles["autocomplete__dropdown-item--selected"]}`
@@ -135,6 +157,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
               }}
               onClick={handleOptionSelect(option)}
               onMouseEnter={handleMouseEnter}
+              aria-selected={selectedIndex === index}
             >
               {getOptionLabel(option)}
             </li>

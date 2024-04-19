@@ -16,6 +16,16 @@
     border: 1px solid var(--text-color);
 }
 
+.autocomplete__input:focus {
+    outline: 2px solid #4A90E2; /* Blue outline for clarity */
+    outline-offset: 2px;
+}
+
+.autocomplete__label {
+    display: block;
+    margin-bottom: 4px;
+}
+
 .autocomplete__dropdown {
     position: absolute;
     background-color: var(--background-color); 
