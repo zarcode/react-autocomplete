@@ -112,21 +112,21 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
       <input
         value={inputValue}
         type="text"
-        className={styles["autocomplete-input"]}
+        className={styles["autocomplete__input"]}
         placeholder="Start typing..."
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
       />
       {showResults && (
-        <ul ref={dropdownRef} className={styles["autocomplete-results"]}>
+        <ul ref={dropdownRef} className={styles["autocomplete__dropdown"]}>
           {options.map((option, index) => (
             <li
               key={index}
               className={
                 selectedIndex === index
-                  ? `${styles["autocomplete-results-item"]} ${styles.selected}`
-                  : styles["autocomplete-results-item"]
+                  ? `${styles["autocomplete__dropdown-item"]} ${styles["autocomplete__dropdown-item--selected"]}`
+                  : styles["autocomplete__dropdown-item"]
               }
               ref={(el) => {
                 if (el) {
