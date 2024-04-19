@@ -11,6 +11,7 @@ function App() {
         architecto illo quas? Nemo rem, incidunt culpa officiis repellendus
         tempora iure facilis!
       </p>
+      <input />
     </div>
   );
 }

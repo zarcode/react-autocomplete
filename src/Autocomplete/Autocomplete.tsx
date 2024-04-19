@@ -23,6 +23,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
   } = props;
 
   const [inputValue, setInputValue] = useState("");
+  const [showResults, setShowResults] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const dropdownRef = useRef(null);
@@ -36,10 +37,13 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInputValue = event.target.value;
+
+    setShowResults(newInputValue !== "");
+    setInputValue(newInputValue);
+
     if (onInputChange) {
       onInputChange(event, newInputValue);
     }
-    setInputValue(newInputValue);
 
     if (newInputValue === "") {
       if (onChange) {
@@ -56,6 +60,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         | React.KeyboardEvent<HTMLInputElement>
     ) => {
       setInputValue(getOptionLabel(option));
+      setShowResults(false);
       if (onChange) {
         onChange(event, option);
       }
@@ -89,14 +94,18 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
     setSelectedIndex(-1);
   };
 
+  const handleBlur = () => {
+    setTimeout(() => {
+      setShowResults(false);
+    }, 150);
+  };
+
   useEffect(() => {
     itemRefs.current[selectedIndex]?.scrollIntoView({
       behavior: "smooth",
       block: "nearest",
     });
   }, [selectedIndex]);
-
-  console.log("selectedIndex", selectedIndex);
 
   return (
     <div className={styles.autocomplete}>
@@ -107,8 +116,9 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         placeholder="Start typing..."
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
       />
-      {inputValue && (
+      {showResults && (
         <ul ref={dropdownRef} className={styles["autocomplete-results"]}>
           {options.map((option, index) => (
             <li
