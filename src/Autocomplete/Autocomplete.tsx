@@ -62,7 +62,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
         onChange={handleInputChange}
       />
       {inputValue && (
-        <ul id="autocomplete-results" className={styles["autocomplete-items"]}>
+        <ul className={styles["autocomplete-results"]}>
           {options.map((option, index) => (
             <li key={index} onClick={handleOptionClick(option)}>
               {getOptionLabel(option)}

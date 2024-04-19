@@ -1,5 +1,4 @@
 .autocomplete {
-    border: 1px solid var(--text-color);
     position: relative;
 }
 
@@ -14,29 +13,35 @@
     width: 100%;
     display: block;
     padding: 10px;
+    border: 1px solid var(--text-color);
 }
 
-.autocomplete-items {
+.autocomplete-results {
     position: absolute;
     background-color: var(--background-color); 
     border: 1px solid var(--text-color);
-    border-bottom: none;
     border-top: none;
     z-index: 99;
     top: 100%;
     left: 0;
+    width: 100%;
     right: 0;
     margin: 0;
     padding: 0;
     list-style-type: none;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
-.autocomplete-items li {
+.autocomplete-results li {
     padding: 10px;
     cursor: pointer;
+}
+
+.autocomplete-results li:not(:last-child) {
     border-bottom: 1px solid var(--text-color);
 }
 
-.autocomplete-items div:hover {
+.autocomplete-results li:hover {
     /* background-color: #e9e9e9; */
 }
