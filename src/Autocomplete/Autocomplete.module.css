@@ -17,7 +17,7 @@
 }
 
 .autocomplete__input:focus {
-    outline: 2px solid #4A90E2; /* Blue outline for clarity */
+    outline: 2px solid var(--highlight-color);
     outline-offset: 2px;
 }
 
@@ -55,4 +55,8 @@
 .autocomplete__dropdown-item--selected,
 .autocomplete-dropdown-item:hover {
     background-color: rgba(255, 255, 255, 0.3);
+}
+
+.autocomplete__dropdown-item-text--highlight {
+    color: var(--highlight-color);
 }

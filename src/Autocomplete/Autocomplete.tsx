@@ -1,6 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./Autocomplete.module.css";
 
+function highlightMatch(text: string, query: string) {
+  if (!query) return text;
+
+  const parts = text.split(new RegExp(`(${query})`, "gi")); // Split the text on the query text
+  return parts.map((part, index) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <span
+        key={index}
+        className={styles["autocomplete__dropdown-item-text--highlight"]}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+}
+
 interface AutocompleteProps<Value> {
   label?: string;
   placeholder?: string;
@@ -159,7 +177,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
               onMouseEnter={handleMouseEnter}
               aria-selected={selectedIndex === index}
             >
-              {getOptionLabel(option)}
+              {highlightMatch(getOptionLabel(option), inputValue)}
             </li>
           ))}
         </ul>
