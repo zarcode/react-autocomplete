@@ -1,6 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import styles from "./Autocomplete.module.css";
 
+const DROPDOWN_MAXHEIGHT = 293;
+
 function highlightMatch(text: string, query: string) {
   if (!query) return text;
 
@@ -21,6 +23,7 @@ function highlightMatch(text: string, query: string) {
 
 interface AutocompleteProps<Value> {
   label?: string;
+  dropdownMaxHeight?: number;
   renderEmpty?: ({ loading }: { loading?: boolean }) => React.ReactNode;
   placeholder?: string;
   loading: boolean;
@@ -54,6 +57,7 @@ function AutocompleteCore<V>(
   const {
     label,
     placeholder = "",
+    dropdownMaxHeight = DROPDOWN_MAXHEIGHT,
     renderEmpty,
     loading,
     options,
@@ -66,8 +70,10 @@ function AutocompleteCore<V>(
   const [inputValue, setInputValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [dropdownAbove, setDropdownAbove] = useState(false);
 
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLLIElement[]>([]);
 
   const derivedValue = value ? getOptionLabel(value) : "";
@@ -170,6 +176,31 @@ function AutocompleteCore<V>(
     });
   }, [selectedIndex]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (inputWrapperRef.current) {
+        const inputRect = inputWrapperRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - inputRect.bottom;
+        const spaceAbove = inputRect.top;
+
+        if (spaceBelow < dropdownMaxHeight && spaceAbove > dropdownMaxHeight) {
+          setDropdownAbove(true);
+        } else {
+          setDropdownAbove(false);
+        }
+      }
+    };
+
+    // Run once on mount
+    handleResize();
+
+    // Add resize listener to adjust on window resize
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [dropdownMaxHeight]);
+
   return (
     <div className={styles.autocomplete}>
       {label ? (
@@ -180,62 +211,74 @@ function AutocompleteCore<V>(
           {label}
         </label>
       ) : null}
-      <input
-        id="autocomplete_input"
-        ref={ref}
-        value={inputValue}
-        type="text"
-        className={styles.autocomplete__input}
-        placeholder={placeholder}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        autoComplete="off"
-        role="combobox"
-        aria-expanded={showDropdown}
-        aria-autocomplete="both"
-      />
-      {showDropdown && (
-        <div className={styles["autocomplete__dropdown"]}>
-          {options.length > 0 ? (
-            <ul
-              ref={dropdownRef}
-              role="listbox"
-              className={`${styles["autocomplete__dropdown-list"]} ${
-                loading ? styles["autocomplete__dropdown-list--loading"] : ""
-              }`}
-            >
-              {options.map((option, index) => (
-                <li
-                  key={index}
-                  role="option"
-                  className={`${styles["autocomplete__dropdown-item"]} ${
-                    selectedIndex === index
-                      ? styles["autocomplete__dropdown-item--selected"]
-                      : ""
-                  }
-                `}
-                  ref={(el) => {
-                    if (el) {
-                      itemRefs.current[index] = el;
+      <div
+        ref={inputWrapperRef}
+        className={styles["autocomplete__input-wrapper"]}
+      >
+        <input
+          id="autocomplete_input"
+          ref={ref}
+          value={inputValue}
+          type="text"
+          className={styles.autocomplete__input}
+          placeholder={placeholder}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          autoComplete="off"
+          role="combobox"
+          aria-expanded={showDropdown}
+          aria-autocomplete="both"
+        />
+        {showDropdown && (
+          <div
+            ref={dropdownRef}
+            className={styles["autocomplete__dropdown"]}
+            style={{
+              maxHeight: DROPDOWN_MAXHEIGHT,
+              bottom: dropdownAbove ? "100%" : undefined,
+              top: dropdownAbove ? undefined : "100%",
+            }}
+          >
+            {options.length > 0 ? (
+              <ul
+                role="listbox"
+                className={`${styles["autocomplete__dropdown-list"]} ${
+                  loading ? styles["autocomplete__dropdown-list--loading"] : ""
+                }`}
+              >
+                {options.map((option, index) => (
+                  <li
+                    key={index}
+                    role="option"
+                    className={`${styles["autocomplete__dropdown-item"]} ${
+                      selectedIndex === index
+                        ? styles["autocomplete__dropdown-item--selected"]
+                        : ""
                     }
-                  }}
-                  onClick={handleOptionSelect(option)}
-                  onMouseEnter={handleMouseEnter}
-                  aria-selected={selectedIndex === index}
-                >
-                  {highlightMatch(getOptionLabel(option), inputValue)}
-                </li>
-              ))}
-            </ul>
-          ) : typeof renderEmpty === "function" ? (
-            renderEmpty({ loading })
-          ) : (
-            <DefaultEmptyList loading={loading} />
-          )}
-        </div>
-      )}
+                `}
+                    ref={(el) => {
+                      if (el) {
+                        itemRefs.current[index] = el;
+                      }
+                    }}
+                    onClick={handleOptionSelect(option)}
+                    onMouseEnter={handleMouseEnter}
+                    aria-selected={selectedIndex === index}
+                  >
+                    {highlightMatch(getOptionLabel(option), inputValue)}
+                  </li>
+                ))}
+              </ul>
+            ) : typeof renderEmpty === "function" ? (
+              renderEmpty({ loading })
+            ) : (
+              <DefaultEmptyList loading={loading} />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
