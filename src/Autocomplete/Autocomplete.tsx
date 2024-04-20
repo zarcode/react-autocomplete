@@ -240,6 +240,8 @@ function AutocompleteCore<V>(
   );
 }
 
-export default forwardRef(AutocompleteCore) as <V>(
+const Autocomplete = forwardRef(AutocompleteCore) as <V>(
   props: AutocompleteProps<V> & { ref?: React.ForwardedRef<HTMLInputElement> }
 ) => ReturnType<typeof AutocompleteCore>;
+
+export default Autocomplete;
