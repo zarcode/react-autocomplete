@@ -21,7 +21,7 @@ function highlightMatch(text: string, query: string) {
 
 interface AutocompleteProps<Value> {
   label?: string;
-  renderEmpty?: () => React.ReactNode;
+  renderEmpty?: ({ loading }: { loading?: boolean }) => React.ReactNode;
   placeholder?: string;
   loading: boolean;
   options: Value[];
@@ -35,8 +35,16 @@ function defaultGetOptionLabel<V>(option: V): string {
   return option == null ? "" : String(option);
 }
 
-function DefaultEmptyList() {
-  return <div className={styles["autocomplete__dropdown-empty"]}>No items</div>;
+function DefaultEmptyList({ loading }: { loading: boolean }) {
+  return (
+    <div
+      className={`${styles["autocomplete__dropdown-empty"]} ${
+        loading ? styles["autocomplete__dropdown-empty--stale"] : ""
+      }`}
+    >
+      No items
+    </div>
+  );
 }
 
 export default function Autocomplete<V>(props: AutocompleteProps<V>) {
@@ -218,9 +226,9 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
               ))}
             </ul>
           ) : typeof renderEmpty === "function" ? (
-            renderEmpty()
+            renderEmpty({ loading })
           ) : (
-            <DefaultEmptyList />
+            <DefaultEmptyList loading={loading} />
           )}
         </div>
       )}
