@@ -26,9 +26,9 @@ interface AutocompleteProps<Value> {
   dropdownMaxHeight?: number;
   renderEmpty?: ({ loading }: { loading?: boolean }) => React.ReactNode;
   placeholder?: string;
-  loading: boolean;
-  options: Value[];
-  value: Value;
+  loading?: boolean;
+  options?: Value[];
+  value?: Value;
   onChange?: (event: React.SyntheticEvent, value: Value | null) => void;
   onInputChange?: (event: React.SyntheticEvent, value: string) => void;
   getOptionLabel?: (option: Value) => string;
@@ -59,8 +59,8 @@ function AutocompleteCore<V>(
     placeholder = "",
     dropdownMaxHeight = DROPDOWN_MAXHEIGHT,
     renderEmpty,
-    loading,
-    options,
+    loading = false,
+    options = [],
     value,
     onChange,
     onInputChange,
