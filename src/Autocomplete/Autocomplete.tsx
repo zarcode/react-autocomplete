@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import styles from "./Autocomplete.module.css";
 
 function highlightMatch(text: string, query: string) {
@@ -47,7 +47,10 @@ function DefaultEmptyList({ loading }: { loading: boolean }) {
   );
 }
 
-export default function Autocomplete<V>(props: AutocompleteProps<V>) {
+function AutocompleteCore<V>(
+  props: AutocompleteProps<V>,
+  ref: React.ForwardedRef<HTMLInputElement>
+) {
   const {
     label,
     placeholder = "",
@@ -179,6 +182,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
       ) : null}
       <input
         id="autocomplete_input"
+        ref={ref}
         value={inputValue}
         type="text"
         className={styles.autocomplete__input}
@@ -235,3 +239,7 @@ export default function Autocomplete<V>(props: AutocompleteProps<V>) {
     </div>
   );
 }
+
+export default forwardRef(AutocompleteCore) as <V>(
+  props: AutocompleteProps<V> & { ref?: React.ForwardedRef<HTMLInputElement> }
+) => ReturnType<typeof AutocompleteCore>;

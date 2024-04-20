@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "./useDebounceCallback";
 import "./App.css";
 import { Autocomplete } from "./Autocomplete";
@@ -68,6 +68,7 @@ function AsyncAutocomplete() {
   const [value, setValue] = useState<Option | null>(null);
   const [options, setOptions] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = useCallback(async (term: string) => {
     if (!term) {
@@ -87,13 +88,17 @@ function AsyncAutocomplete() {
     setLoading(false);
   }, []);
 
-  // const debouncedSearch = debounce(handleSearch, 1000);
   const debouncedSearch = useDebouncedCallback(handleSearch, 1000);
 
-  console.log("options", options);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   return (
     <Autocomplete
+      ref={inputRef}
       label="Movie"
       placeholder="Select the movie"
       loading={loading}
