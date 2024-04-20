@@ -3,10 +3,15 @@ import styles from "./Autocomplete.module.css";
 
 const DROPDOWN_MAXHEIGHT = 293;
 
+function escapeRegExp(text: string) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
 function highlightMatch(text: string, query: string) {
   if (!query) return text;
 
-  const parts = text.split(new RegExp(`(${query})`, "gi")); // Split the text on the query text
+  const escapedQuery = escapeRegExp(query);
+  const parts = text.split(new RegExp(`(${escapedQuery})`, "gi")); // Split the text on the query text
   return parts.map((part, index) =>
     part.toLowerCase() === query.toLowerCase() ? (
       <span
