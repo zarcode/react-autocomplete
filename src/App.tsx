@@ -1,17 +1,15 @@
 import "./App.css";
-import AsyncAutocomplete from "./AsyncAutocomplete";
+import CharactersSearch from "./CharactersSelect";
 
 function App() {
   return (
     <div className="container">
-      <AsyncAutocomplete />
+      <CharactersSearch />
       <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor impedit
-        corporis quia expedita quaerat recusandae. Recusandae placeat earum
-        architecto illo quas? Nemo rem, incidunt culpa officiis repellendus
-        tempora iure facilis!
+        The component above connects to the Harry Potter API to fetch characters
+        so you can select them. It's searching for a character by first name.
+        Start by typing something."
       </p>
-      {/* <input /> */}
     </div>
   );
 }
