@@ -151,6 +151,7 @@ function AutocompleteCore<V>(
         }
         break;
       case "Escape":
+        event.preventDefault();
         setShowDropdown(false);
         setSelectedIndex(-1);
         break;
@@ -246,6 +247,9 @@ function AutocompleteCore<V>(
               top: dropdownAbove ? undefined : "100%",
             }}
           >
+            {loading ? (
+              <div className={`${styles["autocomplete__dropdown-loader"]}`} />
+            ) : null}
             {options.length > 0 ? (
               <ul
                 role="listbox"
