@@ -1,10 +1,10 @@
 import "./App.css";
-import CharactersSearch from "./CharactersSelect";
+import { CharactersSelect } from "./CharactersSelect";
 
 function App() {
   return (
     <div className="container">
-      <CharactersSearch />
+      <CharactersSelect />
       <p>
         The component above connects to the Harry Potter API to fetch characters
         so you can select them. It's searching for a character by first name.

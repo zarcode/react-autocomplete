@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useDebouncedCallback } from "./useDebounceCallback";
-import { Autocomplete } from "./Autocomplete";
+import { useDebouncedCallback } from "../hooks/useDebounceCallback";
+import { Autocomplete } from "../Autocomplete";
 
 type Character = {
   fullName: string;
