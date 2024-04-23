@@ -1,6 +1,6 @@
 # Autocomplete Component
 
-This project is an implementation of Autocomplete React Component as well as a demonstration on how it can be used. It contains an example of usage that connects to [Harry Potter API](https://github.com/fedeperin/potterapi) to fetch character names. Users can search characters by first name by starting to type in the input field.
+This project is an implementation of Autocomplete React Component, **without any dependencies, only pure React**, as well as a demonstration on how it can be used. It contains an example of usage that connects to [Harry Potter API](https://github.com/fedeperin/potterapi) to fetch character names. Users can search characters by first name by starting to type in the input field.
 
 Try it out https://zarcode.github.io/react-autocomplete/
 
